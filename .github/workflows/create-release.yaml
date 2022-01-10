@@ -39,6 +39,8 @@ jobs:
         run: |
           printf "${{ steps.version.outputs.version }}" > "${{ github.event.inputs.path }}"
           git add "${{ github.event.inputs.path }}"
+          git config user.name 'GitHub Action'
+          git config user.email '2027679+andrew-su@users.noreply.github.com'
           git commit -m 'Create release version ${{ steps.version.outputs.version }}'
           git push
 
