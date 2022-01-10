@@ -35,8 +35,12 @@ jobs:
         run: |
           echo "previous version is ${{ steps.version.outputs.previous-version }}" 
           echo "new version is ${{ steps.version.outputs.version }}" 
-
-
+      - name: update version
+        run: |
+          printf "${{ steps.version.outputs.version }}" > "${{ github.event.inputs.path }}"
+          git add "${{ github.event.inputs.path }}"
+          git commit -m 'Create release version ${{ steps.version.outputs.version }}'
+          git push
 
 
 
