@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      path:
+        type: choice
+        description: Select the VERSION file to modify
+        options:
+        - ./VERSION
+        - ./subproject/VERSION
+      release-type:
+        type: choice
+        description: The type of release
+        options:
+        - major
+        - minor
+        - patch
+      pre-release-label:
+        type: string
+        description: Pre-release label
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: version
+        uses: dinosu-actions/semver-bump@v1.0
+        with:
+          path: "${{ github.event.inputs.path }}"
+          release-type: ${{ github.event.inputs.release-type }}
+          pre-release: ${{ github.event.inputs.pre-release-label }}
+      - name: print
+        run: |
+          echo "previous version is ${{ steps.version.outputs.previous-version }}" 
+          echo "new version is ${{ steps.version.outputs.version }}" 
+
+
+
+
+
+
+
