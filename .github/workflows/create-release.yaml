@@ -59,4 +59,5 @@ jobs:
           ref: ${{ needs.bump-version.outputs.sha }}
           fetch-depth: 0
       - run: |
+          echo ${{ needs.bump-version.outputs.sha }}
           cat VERSION
