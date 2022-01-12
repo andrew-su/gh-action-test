@@ -48,7 +48,7 @@ jobs:
         run: |
           sha=$(git rev-parse HEAD)
           echo $sha
-          echo "::set-output name=SHA::$sha"
+          echo "::set-output name=sha::$sha"
           
   tests:
     runs-on: ubuntu-latest
