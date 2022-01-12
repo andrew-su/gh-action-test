@@ -13,9 +13,9 @@ on:
         type: choice
         description: The type of release
         options:
-        - major
-        - minor
         - patch
+        - minor
+        - major
       pre-release-label:
         type: string
         description: Pre-release label
@@ -45,6 +45,7 @@ jobs:
           git push
   tests:
     runs-on: ubuntu-latest
+    needs: create-release
     steps:
       - uses: actions/checkout@v2
       - run: |
