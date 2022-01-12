@@ -1,4 +1,4 @@
-name: CI
+name: Create release
 
 on:
   workflow_dispatch:
@@ -43,8 +43,9 @@ jobs:
           git config user.email '2027679+andrew-su@users.noreply.github.com'
           git commit -m 'Create release version ${{ steps.version.outputs.version }}'
           git push
-
-
-
-
-
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cat VERSION
