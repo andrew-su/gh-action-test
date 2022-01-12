@@ -21,7 +21,7 @@ on:
         description: Pre-release label
 
 jobs:
-  create-release:
+  bump-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -43,10 +43,20 @@ jobs:
           git config user.email '2027679+andrew-su@users.noreply.github.com'
           git commit -m 'Create release version ${{ steps.version.outputs.version }}'
           git push
+      - name: Get SHA
+        id: sha
+        run: |
+          sha=$(git rev-parse HEAD)
+          echo $sha
+          echo "::set-output name=SHA::$sha"
+          
   tests:
     runs-on: ubuntu-latest
-    needs: create-release
+    needs: [bump-version]
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ needs.bump-version.outputs.sha }}
+          fetch-depth: 0
       - run: |
           cat VERSION
