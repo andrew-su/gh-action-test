@@ -23,6 +23,8 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
     steps:
       - uses: actions/checkout@v2
       - id: version
