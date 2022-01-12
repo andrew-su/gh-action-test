@@ -65,7 +65,7 @@ jobs:
           cat VERSION
   omg:
     runs-on: ubuntu-latest
-    needs: [tests]
+    needs: [tests, bump-version]
     steps:
       - uses: actions/checkout@v2
         with:
