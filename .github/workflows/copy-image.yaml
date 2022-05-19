@@ -1,0 +1,65 @@
+name: Migrate Image
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  migrate-image:
+    runs-on: ubuntu-latest
+    outputs: {}
+    steps:
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: install crane
+      run: |
+        curl \
+          --show-error \
+          --silent \
+          --location \
+          "https://github.com/google/go-containerregistry/releases/download/v${CRANE_VERSION}/go-containerregistry_Linux_x86_64.tar.gz" \
+        | tar -C "/usr/local/bin" -xz crane
+      env:
+        CRANE_VERSION: 0.9.0
+    - name: copy image
+      run: |
+        LATEST_UPSTREAM_VERSION=$(crane ls ${{env.SRC_IMAGE}} | grep ${{env.TAG_FILTER}} | sort -V | tail -1)
+        SRC_FULL=${{env.SRC_IMAGE}}:${LATEST_UPSTREAM_VERSION}
+
+        DEST_TAG=${LATEST_UPSTREAM_VERSION#${TAG_FILTER}}
+        DEST_FULL=${{env.DEST_IMAGE}}:${DEST_TAG}
+        LATEST_VERSION=$(crane ls ${{env.DEST_IMAGE}} | grep ${DEST_TAG} || true)
+
+        if [ "${DEST_TAG}" == "${LATEST_VERSION}" ]; then
+          echo Image with tag \(${DEST_TAG}\) already exists.
+          echo Checking digests of ${SRC_FULL} and ${DEST_FULL}... 
+
+          SRC_SHA=$(crane digest ${SRC_FULL})
+          DEST_SHA=$(crane digest ${DEST_FULL})
+
+          if [ ${SRC_SHA} != ${DEST_SHA} ]; then
+            echo Image digests mismatch.
+            echo ${SRC_FULL} \| ${SRC_SHA}
+            echo ${DEST_FULL} \| ${DEST_SHA}
+            exit 1
+          fi
+
+          echo Digests match \| ${DEST_SHA}.
+        else
+          echo Image with tag \(${DEST_TAG}\) NOT FOUND.
+          echo Copying ${SRC_FULL} to ${DEST_FULL}...
+          crane copy ${SRC_FULL} ${DEST_FULL}
+        fi 
+      env:
+        DEST_IMAGE: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}/nodejs-function-buildpack
+        SRC_IMAGE: quay.io/boson/faas-stack-build
+        TAG_FILTER: nodejs-
