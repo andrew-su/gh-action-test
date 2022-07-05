@@ -1,0 +1,41 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Delete Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        type: string
+        required: true
+        default: ${{github.repository_owner}}
+      repo:
+        required: true
+        type: string
+      package-name:
+        type: string
+        required: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  delete-packages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/delete-package-versions@v3
+        with: 
+          owner: ${{github.event.inputs.owner}}
+          repo: ${{github.event.inputs.repo}}
+          package-name: ${{github.event.inputs.package-name}}
+          token: ${{ secrets.GITHUB_PAT }}
+          min-versions-to-keep: 0
+          
