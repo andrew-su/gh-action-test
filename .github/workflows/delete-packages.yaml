@@ -36,6 +36,6 @@ jobs:
           owner: ${{github.event.inputs.owner}}
           repo: ${{github.event.inputs.repo}}
           package-name: ${{github.event.inputs.package-name}}
-          token: ${{ secrets.GITHUB_PAT }}
+          token: ${{ secrets.MY_PAT }}
           min-versions-to-keep: 0
           
