@@ -11,7 +11,7 @@ on:
       owner:
         type: string
         required: true
-        default: ${{github.repository_owner}}
+        default: andrew-su
       repo:
         required: true
         type: string
