@@ -13,7 +13,7 @@ env:
 jobs:
   task1:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == "workflow_dispatch" && inputs.foo == "a" }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.foo == "a" }}
     outputs: {}
     steps:
 
@@ -23,7 +23,7 @@ jobs:
         
   task2:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == "workflow_dispatch" && inputs.foo == "q" }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.foo == "q" }}
     outputs: {}
     steps:
 
