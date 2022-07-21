@@ -2,18 +2,31 @@ name: SRP
 
 on:
   workflow_dispatch:
+    inputs:
+      foo:
+        type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  migrate-image:
+  task1:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == "workflow_dispatch" && inputs.foo == "a" }}
     outputs: {}
     steps:
 
     - name: blah
       run: |
-        echo ${{ github.event_name }}
+        echo this is task 1
         
+  task2:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == "workflow_dispatch" && inputs.foo == "q" }}
+    outputs: {}
+    steps:
+
+    - name: blah
+      run: |
+        echo This is task 2
